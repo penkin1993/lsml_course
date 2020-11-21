@@ -16,20 +16,21 @@ class LinearRegressionTest extends AnyFlatSpec with should.Matchers with WithSpa
   lazy val vectors: Seq[Vector] = LinearRegressionTest._vectors_train
 
   "Model" should "predict input data" in {
-    val model: LinearRegressionModel = new LinearRegressionModel(
-      weights = Vectors.dense(2.0, -0.5).toDense,
-    ).setInputCol("features")
+    val estimator = new LinearRegression()
+      .setInputCol("features")
       .setOutputCol("features")
 
+    val model = estimator.fit(data_train)
 
-    val vectors: Array[Vector] = model.transform(data_train).collect().map(_.getAs[Vector](0))
+    val vectors: Array[Vector] = model.transform(data_test).collect().map(_.getAs[Vector](0))
 
-    vectors.length should be(1)
+    vectors.length should be(4)
 
     vectors(0)(2) should be(12.0 +- delta)
     vectors(1)(2) should be(10.0 +- delta)
     vectors(2)(2) should be(2.0 +- delta)
     vectors(3)(2) should be(2.0 +- delta)
+
   }
 
   "Estimator" should "should produce functional model" in {
